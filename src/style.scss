@@ -1,0 +1,58 @@
+.formContainer{
+    background-color: darkslategrey;
+    height: 100vh;
+    display: flex;
+    align-items:  center;
+    justify-content: center;
+
+    .formWrapper {
+        background-color: honeydew;
+        padding: 20px 60px;
+        border-radius: 10px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: center;
+
+        .logo{
+            color: darkblue;
+            font-weight: bold;
+            font-size: 30px;
+        }
+
+        .title{
+            color: darkblue;
+            font-size: 18px;
+        }
+
+        form{
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+
+            input{
+               padding: 15px;
+               border: none;
+               width: 300px;
+               border-bottom: 1px solid darkslategray;
+               &::placeholder{
+                color: rgb(175,175,175);
+               }
+            }
+
+            button{
+                background-color: teal;
+                color: white;
+                padding: 10px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+            }
+        }
+        p{
+            color: darkslateblue;
+            font-size: 16px;
+            margin: 10 px;
+        }
+    }
+}
