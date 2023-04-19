@@ -1,5 +1,7 @@
 import React from 'react';
 import More from "../img/more.png"
+import Messages from './Messages';
+import Input from './Input';
 
 function Chat() {
     return (
@@ -10,6 +12,8 @@ function Chat() {
                     <img src={More} alt="" />
                 </div>
             </div>
+            <Messages/>
+            <Input/>
         </div>
     );
 }
