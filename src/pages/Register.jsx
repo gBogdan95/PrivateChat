@@ -1,14 +1,15 @@
+
 import React, { useState } from "react";
 import Add from "../img/addAvatar.png";
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
-import { auth, db, storage} from "../firebase";
-import { ref, uploadBytesResumable, getDownloadURL, getStorage, uploadBytes } from "firebase/storage";
+import { auth, db } from "../firebase";
 import { addDoc, collection } from "firebase/firestore";
-import { useNavigate, Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 
 const Register = () => {
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     setLoading(true);
@@ -23,6 +24,11 @@ const Register = () => {
     try {
      const res = await createUserWithEmailAndPassword(auth, email, password);
 
+     await updateProfile(res.user, {
+      displayName,
+      photoURL: url
+     });
+
       await addDoc(collection(db, "users"), {
         uid: res.user.uid,
         displayName,
@@ -33,9 +39,10 @@ const Register = () => {
       await addDoc(collection(db,"userChats"), {
         uid: res.user.uid
       });
-      
+      navigate("/");
     } catch (e) {
       console.error("Error adding document: ", e);
+      setLoading(false);
     }
   };
 
@@ -54,9 +61,10 @@ const Register = () => {
             <span>Add an avatar</span>
           </label>
           <button disabled={loading}>Sign up</button>
+          {loading && "Your account has been created sucesfully!"}
         </form>
         <p>
-          You do have an account? <Link to="/register">Login</Link>
+          You do have an account? <Link to="/login">Login</Link>
         </p>
       </div>
     </div>
