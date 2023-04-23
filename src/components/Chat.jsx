@@ -1,15 +1,16 @@
 import React from 'react';
-import More from "../img/more.png"
 import Messages from './Messages';
 import Input from './Input';
+import { auth } from "../firebase"
+import { signOut } from "firebase/auth"
 
 function Chat() {
     return (
         <div className='chat'>
             <div className="chatInfo">
                 <span>Jane</span>
-                <div className="chatIcons">
-                    <img src={More} alt="" />
+                <div className="logout">
+                <button onClick={()=>signOut(auth)}>Logout</button>
                 </div>
             </div>
             <Messages/>

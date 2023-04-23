@@ -1,19 +1,83 @@
-import React from 'react';
+import React, { useContext, useState } from 'react';
+import { db } from "../firebase";
+import { collection, query, where, addDoc, updateDoc, serverTimestamp, getDocs } from 'firebase/firestore';
+import { AuthContext } from '../context/AuthContext';
 
 function Search() {
+    const [username, setUsername] = useState("")
+    const [user, setUser] = useState(null)
+    const[err, setErr] = useState(false)
+
+    const {currentUser} = useContext(AuthContext)
+
+    const handleSearch = async ()=> {
+    const q = query(
+            collection(db, "users"),
+            where("displayName", "==", username)
+        );
+
+        try {
+            const querySnapshot = await getDocs(q);
+            querySnapshot.forEach((doc) => {
+              setUser(doc.data());
+            });
+          } catch (err) {
+            setErr(true);
+          }
+        };
+
+    const handleKey = e=>{
+        e.code === "Enter" && handleSearch();
+    };
+
+    const handleSelect = async () => {
+        //check wether the group(chats in firestore) exists, if not create
+        const combinedId = currentUser.uid > user.uid ? currentUser.uid + user.uid : user.uid + currentUser.uid;
+        try{
+            const res = await addDoc(collection(db, "chats",combinedId));
+
+            if(!res.exists()){
+                //create a chat in chats collection
+                await addDoc(collection(db,"chats",combinedId), { messages: []});
+
+                //create user chats
+                await updateDoc(collection(db, "userChats", currentUser.uid),{
+                    [combinedId+".userInfo"]: {
+                        uid:user.uid,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL
+                    },
+                    [combinedId+".date"]: serverTimestamp()
+                });
+                await updateDoc(collection(db, "userChats", user.uid),{
+                    [combinedId+".userInfo"]: {
+                        uid:currentUser.uid,
+                        displayName: user.displayName,
+                        photoURL: user.photoURL
+                    },
+                    [combinedId+".date"]: serverTimestamp()
+                });
+            }
+        } catch (err) {}
+
+        //create user chats
+    }
+
     return (
         <div  className='search'>
             <div className="searchForm">
-                <input type="text" placeholder='Find a user'/>
+                <input type="text" placeholder='Find a user' onKeyDown={handleKey} onChange={e=>setUsername(e.target.value)}/>
             </div>
-            <div className="userChat">
-                <img src="https://images.squarespace-cdn.com/content/v1/55db3b44e4b01e5be14cad77/1657893813325-56Q5M5A6GELA24XFRKUU/Screenshot+2022-07-15+at+16.03.18.png?format=1500w" alt="" />
+            {err && <span>User not found!</span>}
+            {user && <div className="userChat" onClick={handleSelect}>
+                <img src={user.photoURL} alt="" />
                 <div className="userChatInfo">
-                    <span>Jane</span>
+                    <span>{user.displayName}</span>
                 </div>
-            </div>
+            </div>}
         </div>
     );
-}
+};
+
 
 export default Search;

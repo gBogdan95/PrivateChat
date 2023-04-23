@@ -199,14 +199,14 @@
             justify-content: space-between;
             padding: 10px;
 
-            .chatIcons{
-                display: flex;
-                gap: 10px;
-
-                img{
-                    height: 24px;
-                    cursor: pointer;
-                }
+            button{
+                background-color: rgb(54, 118, 118);
+                color: white;
+                padding: 10px;
+                font-weight: bold;
+                border: none;
+                cursor: pointer;
+                border-radius: 12%;
             }
         }
 
